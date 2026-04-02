@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vault Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+</head>
+<body class="bg-slate-900 text-white p-10">
+    <h1 class="text-2xl font-black mb-10 text-cyan-400 italic">VAULT ADMIN PANEL</h1>
+    <div id="list" class="space-y-4"></div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhTOWBvfqDvmDW03FOF5OqEq8HRv5dMME",
+            authDomain: "vault-messenger-fcb60.firebaseapp.com",
+            projectId: "vault-messenger-fcb60",
+            databaseURL: "https://vault-messenger-fcb60-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        db.ref('payments').on('value', (s) => {
+            const l = document.getElementById('list');
+            l.innerHTML = "";
+            s.forEach(c => {
+                const d = c.val();
+                if(d.status === 'pending') {
+                    l.innerHTML += `<div class="bg-slate-800 p-6 rounded-2xl flex justify-between items-center border border-white/5">
+                        <span class="font-mono text-cyan-300 font-bold tracking-widest">${d.trx}</span>
+                        <button onclick="approve('${c.key}')" class="bg-cyan-500 text-black px-8 py-2 rounded-xl font-black uppercase text-xs">Approve</button>
+                    </div>`;
+                }
+            });
+        });
+        function approve(id) { db.ref('payments/'+id).update({status: 'approved'}); alert("Access Granted!"); }
+    </script>
+</body>
+</html>
